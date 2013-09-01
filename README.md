@@ -1,4 +1,13 @@
-sublime_utils
-=============
+Sublime Text 3 : Plugin Utilities
+==========================
 
-Helper module with some useful functionality when developing Sublime Text 3 plugins.
+A module of Sublime Text 3 utilities for when you are developing plugins.
+
+## Issues / Suggestions:
+
+Send on any suggestions or issues.
+
+## Copyright and license
+Copyright 2013 David Higgins
+
+[MIT License](LICENSE)
