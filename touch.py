@@ -1,15 +1,6 @@
-"""
-Thoughts:
-
-- Remove individual regions and handlers, rather than whole views.
-- Configurable on a view and/or handler level whether it is removed
-  when the view is closed.
-  Should we auto remove all when the view is closed?
-- Functionality to add more than one region/handler at a time to a view.
-
-"""
 
 import time
+import uuid
 
 import sublime_plugin
 
@@ -19,21 +10,49 @@ TOUCH_EVENT_HANDLERS = {}
 TOUCH_EVENT_HANDLERS_ASYNC = {}
 
 
-def add_event_handler(view, region, handler=None, HANDLERS=TOUCH_EVENT_HANDLERS):
-    HANDLERS.setdefault(view.id(), []).append([region, handler])
+def add_event_handler(view, region, handler=None, handler_id=None, HANDLERS=TOUCH_EVENT_HANDLERS):
+    if handler_id is None:
+        handler_id = uuid.uuid4()
+    HANDLERS.setdefault(view.id(), {})[handler_id] = [region, handler]
+    return handler_id
 
 
-def add_event_handler_async(view, region, handler):
-    add_event_handler(view, region, handler, TOUCH_EVENT_HANDLERS_ASYNC)
+def add_event_handler_async(view, region, handler, handler_id):
+    return add_event_handler(view, region, handler, handler_id, TOUCH_EVENT_HANDLERS_ASYNC)
+
+
+def add_event_handlers(view, regions, handlers, handler_ids=None, HANDLERS=TOUCH_EVENT_HANDLERS):
+    handler_ids = [] if handler_ids is None else handler_ids
+    for i in range(regions):
+        if len(handler_ids) == i:
+            handler_ids.append(None)
+        handler_ids[i] = add_event_handler(view, regions[i], handlers[i], handler_ids[i], HANDLERS)
+    return handler_ids
+
+
+def add_event_handlers_async(view, regions, handlers, handler_ids):
+    return add_event_handlers(view, regions, handlers, handler_ids, TOUCH_EVENT_HANDLERS_ASYNC)
+
+
+def remove_event_handler(view, handler_id, HANDLERS=TOUCH_EVENT_HANDLERS):
+    if view.id() in HANDLERS and handler_id in HANDLERS[view.id()]:
+        del HANDLERS[view.id()][handler_id]
+        return handler_id
+
+
+def remove_event_handler_async(view, handler_id):
+    return remove_event_handler(view, handler_id, TOUCH_EVENT_HANDLERS_ASYNC)
 
 
 def remove_event_handlers(view, HANDLERS=TOUCH_EVENT_HANDLERS):
     if view.id() in HANDLERS:
+        handler_ids = HANDLERS[view.id()].keys()
         del HANDLERS[view.id()]
+        return handler_ids
 
 
 def remove_event_handlers_async(view):
-    remove_event_handlers(view, TOUCH_EVENT_HANDLERS_ASYNC)
+    return remove_event_handlers(view, TOUCH_EVENT_HANDLERS_ASYNC)
 
 
 def event_handler(view, HANDLERS=TOUCH_EVENT_HANDLERS):
@@ -48,9 +67,12 @@ def event_handler(view, HANDLERS=TOUCH_EVENT_HANDLERS):
     ):
         point = regions[0].begin()
         TOUCH_EVENT_TIME = event_time
-        for region, handler in HANDLERS[view.id()]:
+
+        view_handler_items = list(HANDLERS[view.id()].items())
+        for handler_id, region_handler in view_handler_items:
+            region, handler = region_handler
             if region.contains(point):
-                handler(view, region, point)
+                handler(handler_id, view, region, point)
 
 
 class LiveEventListener(sublime_plugin.EventListener):
