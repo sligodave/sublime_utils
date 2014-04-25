@@ -1,7 +1,7 @@
-Sublime Text 3 : Plugin Utilities
+Sublime Text 2 & 3 : Plugin Utilities
 ==========================
 
-A module of Sublime Text 3 utilities for when you are developing plugins.
+A module of Sublime Text 2 & 3 utilities for when you are developing plugins.
 
 ## Issues / Suggestions:
 
