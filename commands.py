@@ -4,6 +4,9 @@ import sublime_plugin
 
 class UtilsEditViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, data=None, start=0, end=None):
+        start = int(start)
+        if end is not None:
+            end = int(end)
         was_read_only = self.view.is_read_only()
         if was_read_only:
             self.view.set_read_only(False)

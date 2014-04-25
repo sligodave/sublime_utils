@@ -17,7 +17,7 @@ def add_event_handler(view, region, handler=None, handler_id=None, HANDLERS=TOUC
     return handler_id
 
 
-def add_event_handler_async(view, region, handler, handler_id):
+def add_event_handler_async(view, region, handler, handler_id=None):
     return add_event_handler(view, region, handler, handler_id, TOUCH_EVENT_HANDLERS_ASYNC)
 
 
@@ -30,7 +30,7 @@ def add_event_handlers(view, regions, handlers, handler_ids=None, HANDLERS=TOUCH
     return handler_ids
 
 
-def add_event_handlers_async(view, regions, handlers, handler_ids):
+def add_event_handlers_async(view, regions, handlers, handler_ids=None):
     return add_event_handlers(view, regions, handlers, handler_ids, TOUCH_EVENT_HANDLERS_ASYNC)
 
 
