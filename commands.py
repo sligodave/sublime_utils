@@ -2,6 +2,7 @@
 import sublime
 import sublime_plugin
 
+
 class UtilsEditViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, data=None, start=0, end=None):
         start = int(start)
