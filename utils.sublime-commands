@@ -1,5 +1,33 @@
 [
-    // { "caption": "Utils: Open plugin file", "command": "utils_open_plugin_file"},
-    // { "caption": "Utils: Insert Time Stamp", "command": "utils_insert_time_stamp" },
-    // { "caption": "Utils: Open file in browser", "command": "utils_open_file_in_browser"}
+    {
+        "caption": "Utils: Insert Time Stamp",
+        "command": "utils_insert_time_stamp"
+    },
+    {
+        "caption": "Utils: Reload Current View",
+        "command": "utils_reload_view"
+    },
+    {
+        "caption": "Utils: Reload All Views",
+        "command": "utils_reload_view",
+        "args": {
+            "all": true
+        }
+    },
+    {
+        "caption": "Utils: Python to Json",
+        "command": "utils_python_to_json"
+    },
+    {
+        "caption": "Utils: Tidy Json",
+        "command": "utils_tidy_json"
+    },
+    {
+        "caption": "Utils: Open plugin file",
+        "command": "utils_open_plugin_file"
+    },
+    {
+        "caption": "Utils: Set View Name",
+        "command": "utils_set_view_name"
+    }
 ]

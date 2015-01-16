@@ -1,5 +1,40 @@
 [
-	// { "keys": ["super+t", "super+s"], "command": "utils_insert_time_stamp"},
-	// { "keys": ["super+b"], "command": "utils_open_file_in_browser"}
+    {
+        "keys": [
+            "super+t",
+            "super+s"
+        ],
+        "command": "utils_insert_time_stamp"
+    },
+    {
+        "keys": [
+            "ctrl+super+o",
+            "ctrl+super+o"
+        ],
+        "command": "utils_reload_view"
+    },
+    {
+        "keys": [
+            "ctrl+super+o",
+            "ctrl+super+a"
+        ],
+        "command": "utils_reload_view",
+        "args": {
+            "all": true
+        }
+    },
+    {
+        "keys": [
+            "super+p",
+            "super+j"
+        ],
+        "command": "utils_python_to_json"
+    },
+    {
+        "keys": [
+            "super+j",
+            "super+i"
+        ],
+        "command": "utils_tidy_json"
+    }
 ]
-

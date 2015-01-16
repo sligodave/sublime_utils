@@ -3,19 +3,10 @@ import os
 import json
 import os.path
 import datetime
-import webbrowser
 import collections
 
 import sublime
 import sublime_plugin
-
-
-def log(msg, area='Utils', debug=False):
-    settings = sublime.load_settings('Utils.sublime-settings')
-    if settings.get('debug', debug):
-        if callable(msg):
-            msg = msg()
-        print('[%s]: %s' % (area, str(msg)))
 
 
 class UtilsEditViewCommand(sublime_plugin.TextCommand):
@@ -52,15 +43,6 @@ class UtilsInsertTimeStampCommand(sublime_plugin.TextCommand):
                     'end': region.end()
                 }
             )
-
-
-class UtilsOpenViewInBrowserCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        path = self.view.file_name()
-        if path is not None:
-            webbrowser.open('file://%s' % path)
-        else:
-            sublime.error_message('Please save file first.')
 
 
 class UtilsOpenPluginFileCommand(sublime_plugin.WindowCommand):
@@ -167,18 +149,68 @@ class UtilsSetViewNameCommand(sublime_plugin.TextCommand):
         self.view.set_name(name)
 
 
-def __add_value(parent, value):
-    if isinstance(parent['value'], dict):
-        if 'current_key' not in parent:
-            parent['current_key'] = value
-        else:
-            parent['value'][parent['current_key']] = value
-            del parent['current_key']
-    elif isinstance(parent['value'], list):
-        parent['value'].append(value)
+class UtilsPythonToJsonCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        regions = get_selections(self.view, expand_line=False, expand_all=True)
+        for region in regions:
+            content = self.view.substr(region)
+            content = python_2_json(content)
+            content = json.dumps(content)
+            self.view.run_command(
+                'utils_edit_view',
+                {
+                    'data': content,
+                    'start': region.begin(),
+                    'end': region.end()
+                }
+            )
+
+
+class UtilsTidyJsonCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for region in get_selections(self.view):
+            data = self.view.substr(region)
+            data = json.loads(data, object_pairs_hook=collections.OrderedDict)
+            data = json.dumps(data, indent=4)
+            self.view.replace(edit, region, data)
+
+
+########################################################
+# START Helpers
+########################################################
+
+def log(msg, area='Utils', debug=False):
+    settings = sublime.load_settings('Utils.sublime-settings')
+    if settings.get('debug', debug):
+        if callable(msg):
+            msg = msg()
+        print('[%s]: %s' % (area, str(msg)))
+
+
+def get_selections(view, expand_line=False, expand_all=True):
+    regions = list(view.sel())
+    if len(regions) == 0 and expand_all:
+        regions.append(sublime.Region(0, view.size()))
+    elif len(regions) == 1:
+        if regions[0].empty():
+            if expand_line and not expand_all:
+                regions[0] = view.line(regions[0].a)
+            elif expand_all:
+                regions[0] = sublime.Region(0, view.size())
+    regions = [x for x in regions if not x.empty()]
+    return regions
 
 
 def python_2_json(data):
+    def __add_value(parent, value):
+        if isinstance(parent['value'], dict):
+            if 'current_key' not in parent:
+                parent['current_key'] = value
+            else:
+                parent['value'][parent['current_key']] = value
+                del parent['current_key']
+        elif isinstance(parent['value'], list):
+            parent['value'].append(value)
     root = []
     current = {'value': root}
     i = 0
@@ -239,31 +271,6 @@ def python_2_json(data):
     return root[0]
 
 
-class UtilsPythonToJsonCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        selections = self.view.sel()
-        if len(selections) == 0:
-            return
-        if len(selections) == 1 and selections[0].a == selections[0].b:
-            region = sublime.Region(0, self.view.size())
-            selections.clear()
-            selections.add(region)
-        selections = list(selections)
-        for region in selections:
-            content = self.view.substr(region)
-            content = python_2_json(content)
-            content = json.dumps(content)
-            self.view.run_command(
-                'utils_edit_view',
-                {
-                    'data': content,
-                    'start': region.begin(),
-                    'end': region.end()
-                }
-            )
-
-
-class UtilsTidyJsonCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        self.view.set_syntax_file('Packages/JavaScript/javascript.tmLanguage')
-        self.view.run_command('json_reindent')
+########################################################
+# End Helpers
+########################################################
