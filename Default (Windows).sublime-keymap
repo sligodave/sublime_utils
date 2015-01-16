@@ -1,0 +1,5 @@
+[
+	{ "keys": ["ctrl+t", "ctrl+s"], "command": "utils_insert_time_stamp"},
+	{ "keys": ["ctrl+b"], "command": "utils_open_file_in_browser"}
+]
+

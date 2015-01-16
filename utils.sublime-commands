@@ -1,0 +1,5 @@
+[
+    // { "caption": "Utils: Open plugin file", "command": "utils_open_plugin_file"},
+    // { "caption": "Utils: Insert Time Stamp", "command": "utils_insert_time_stamp" },
+    // { "caption": "Utils: Open file in browser", "command": "utils_open_file_in_browser"}
+]
