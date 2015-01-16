@@ -1,33 +1,61 @@
 [
     {
-        "caption": "Utils: Insert Time Stamp",
+        "caption": "Utils: Insert Time Stamp", 
         "command": "utils_insert_time_stamp"
-    },
+    }, 
     {
-        "caption": "Utils: Reload Current View",
+        "caption": "Utils: Reload Current View", 
         "command": "utils_reload_view"
-    },
+    }, 
     {
-        "caption": "Utils: Reload All Views",
-        "command": "utils_reload_view",
+        "caption": "Utils: Reload All Views", 
+        "command": "utils_reload_view", 
         "args": {
             "all": true
         }
-    },
+    }, 
     {
-        "caption": "Utils: Python to Json",
+        "caption": "Utils: Python to Json", 
         "command": "utils_python_to_json"
-    },
+    }, 
     {
-        "caption": "Utils: Tidy Json",
+        "caption": "Utils: Tidy Json", 
         "command": "utils_tidy_json"
-    },
+    }, 
     {
-        "caption": "Utils: Open plugin file",
+        "caption": "Utils: Open plugin file", 
         "command": "utils_open_plugin_file"
-    },
+    }, 
     {
-        "caption": "Utils: Set View Name",
+        "caption": "Utils: Set View Name", 
         "command": "utils_set_view_name"
+    }, 
+    {
+        "caption": "Utils: Columns: Prompt",
+        "command": "columns_indent"
+    }, 
+    {
+        "caption": "Utils: Columns: Tab", 
+        "command": "columns_indent", 
+        "args": {
+            "separator": "\t", 
+            "replacement": "\t"
+        }
+    }, 
+    {
+        "caption": "Utils: Columns: Comma", 
+        "command": "columns_indent", 
+        "args": {
+            "separator": ",", 
+            "replacement": ","
+        }
+    }, 
+    {
+        "caption": "Utils: Columns: Semi-Colon", 
+        "command": "columns_indent", 
+        "args": {
+            "separator": ";", 
+            "replacement": ";"
+        }
     }
 ]

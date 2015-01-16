@@ -175,6 +175,65 @@ class UtilsTidyJsonCommand(sublime_plugin.TextCommand):
             self.view.replace(edit, region, data)
 
 
+class UtilsColumnsIndentCommand(sublime_plugin.TextCommand):
+    # maybe extend this to read in using csvreader.
+    def run(self, edit, separator=None, replacement=None):
+        if separator is None:
+            self.view.window().show_input_panel(
+                'separator',
+                '',
+                lambda x: self.on_done('separator', x, {}),
+                None,
+                None
+            )
+        elif replacement is None:
+            self.view.window().show_input_panel(
+                'replacement',
+                separator.replace('\\', '\\\\').replace('\n', '\\n').replace('\t', '\\t'),
+                lambda x: self.on_done('replacement', x, {'separator': separator}),
+                None,
+                None
+            )
+        else:
+            selection = get_selections(self.view)
+            selection = reversed(list(selection))
+
+            for region in selection:
+                region = self.view.line(region)
+                region_start_line = self.view.rowcol(region.begin())[0]
+                content = self.view.substr(region)
+                lines = content.split('\n')
+                lines_bits = [x.strip().split(separator) for x in lines]
+                bit_widths = []
+                for line_bits in lines_bits:
+                    for i, line_bit in enumerate(line_bits):
+                        if len(bit_widths) <= i:
+                            bit_widths.append(0)
+                        bit_widths[i] = max(bit_widths[i], len(line_bit.strip()))
+                for i, line_bits in enumerate(lines_bits):
+                    line = replacement.join(
+                        [
+                            b.strip().ljust(bit_widths[j])
+                            for j, b in enumerate(line_bits)
+                        ]
+                    )
+                    line_region = self.view.line(self.view.text_point(i + region_start_line, 0))
+                    self.view.replace(edit, line_region, line)
+
+    def on_done(self, name, value, values):
+        i = 0
+        while i < len(value) - 1:
+            c0 = value[i]
+            c1 = value[i + 1]
+            if c0 == '\\' and c1 in ['t', 'n', '\\']:
+                c2 = {'t': '\t', 'n': '\n', '\\': '\\'}[c1]
+                value = value[:i] + c2 + value[i + 2:]
+                i = i + 1
+            i = i + 1
+        values[name] = value
+        self.view.run_command('utils_columns_indent', values)
+
+
 ########################################################
 # START Helpers
 ########################################################
